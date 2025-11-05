@@ -16,6 +16,9 @@ Sähköposti: anna.virtanen@example.com
 
 """
 
+from datetime import datetime
+
+
 def main():
     # Määritellään tiedoston nimi suoraan koodissa
     varaukset = "varaukset.txt"
@@ -25,8 +28,45 @@ def main():
         varaus = f.read().strip()
 
     # Tulostetaan varaus konsoliin
-    print(varaus)
+    # print(varaus.split('|'))
 
+    # Muutetaan yksikköjä
+
+    varausnumero = int(varaus.split('|')[0])
+    print(varausnumero)  
+
+    varaaja = str(varaus.split('|')[1])
+    print(varaaja)   
+
+    from datetime import datetime
+    Päivämäärä = datetime.strptime(varaus.split('|')[2], "%Y-%m-%d").date()
+    print(Päivämäärä) 
+
+    Aloitusaika = datetime.strptime(varaus.split('|')[3], "%H:%M").time()
+    print(Aloitusaika) 
+
+    Tuntimäärä = int(varaus.split('|')[4])
+    print(Tuntimäärä)
+
+    Tuntihinta = float(varaus.split('|')[5])
+    print(Tuntihinta)
+
+    Kokonaishinta = Tuntihinta * Tuntimäärä
+    print(Kokonaishinta)    
+
+    Maksettu = bool(varaus.split('|')[6] == "True")
+    print(f"Maksettu: {'Kyllä' if Maksettu else 'Ei'}")
+
+    Varauskohde = str(varaus.split('|')[7])
+    print(Varauskohde)
+
+    Puhelinnumero = str(varaus.split('|')[8])
+    print(Puhelinnumero)
+
+    Sähköposti = str(varaus.split('|')[9])
+    print(Sähköposti)
+
+ 
     # Kokeile näitä
     #print(varaus.split('|'))
     #varausId = varaus.split('|')[0]
