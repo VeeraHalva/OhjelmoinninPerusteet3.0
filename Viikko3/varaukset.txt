@@ -1,1 +1,2 @@
-123|Anna Virtanen|2025-10-31|10:00|2|19.95|True|Kokoustila A|0401234567|anna.virtanen@example.com
+12|Pulla Pullanen|2025-10-12|09:00|3|19.95|False|Kokoustila B|0401234567|pulla.pullanen@example.com
+13|Pekka Pennanen|2025-11-12|09:00|1|19.95|True|Kokoustila C|0401234568|pekka.pennanen@example.com
