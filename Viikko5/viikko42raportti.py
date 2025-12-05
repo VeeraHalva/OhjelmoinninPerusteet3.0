@@ -196,7 +196,62 @@ def main():
           f"{kokonaisproduktio_v3:>8.2f}".replace('.',',')) 
     print("--------------------------------------------------------------") 
 
-            
+#Tästä alkaa bonus valikon koodi. tulostaa siis pelkän valikon. koodi muuhun löytyy myös, mutta erillisenä funktiona.Jos haluuaa nähdä aikaisemmat on nämä laitettava kommentteina pois päältä.
+# kai tämänkin olisi voinut eri tavalla, mutta osaaminen loppuu ainakin vielä kesken. Koodi myös vähän kamalan näköinen, mutta toimii.
+#käytetty samoja apufunktioita kuin aikaisemminkin, mutta tehty uudestaan, jotta alkuperäinen pysyy ehjänä.
+def nayta_valikko() -> str:
+    """Näyttää valikon ja palauttaa käyttäjän valinnan."""
+    print("\nValikko:")
+    print("1) Näytä vain kulutus")
+    print("2) Näytä vain tuotanto")
+    print("3) Näytä molemmat")
+    valinta = input("Valitse (1-3): ")
+    return valinta
+
+def main():
+    lukemat = lue_data("viikko42.csv")
+    paivat = [
+        ("Maanantai", "13.10.2025"),
+        ("Tiistai", "14.10.2025"),
+        ("Keskiviikko", "15.10.2025"),
+        ("Torstai", "16.10.2025"),
+        ("Perjantai", "17.10.2025"),
+        ("Lauantai", "18.10.2025"),
+        ("Sunnuntai", "19.10.2025"),
+    ]
+
+    valinta = nayta_valikko()
+
+    1
+    if valinta == "1":
+        print("\nViikon 42 sähkönkulutus kWh, vaiheittain:\n")
+        print(f"{'Päivä':<12}{'Pvm':<12}{'v1':>10}{'v2':>8}{'v3':>8}")
+        print("----------------------------------------------------------")
+        for nimi, pvm in paivat:
+            arvot = paivantiedot(pvm, lukemat)
+            kulutus = [f"{x:.2f}".replace('.', ',') for x in arvot[:3]]
+            print(f"{nimi:<12}{pvm:<12}{kulutus[0]:>12}{kulutus[1]:>8}{kulutus[2]:>8}")
+
+    elif valinta == "2":
+        print("\nViikon 42 sähköntuotanto kWh, vaiheittain:\n")
+        print(f"{'Päivä':<12}{'Pvm':<12}{'v1':>10}{'v2':>8}{'v3':>8}")
+        print("----------------------------------------------------------")
+        for nimi, pvm in paivat:
+            arvot = paivantiedot(pvm, lukemat)
+            tuotanto = [f"{x:.2f}".replace('.', ',') for x in arvot[3:]]
+            print(f"{nimi:<12}{pvm:<12}{tuotanto[0]:>12}{tuotanto[1]:>8}{tuotanto[2]:>8}")
+
+    else: 
+        print("\nViikon 42 sähkönkulutus ja -tuotanto kWh, vaiheittain:\n") 
+        print(f"{'Kulutus':>38}{'Tuotanto':>30}")
+        print(f"{'Päivä':<12}{'Pvm':<12}{'v1':>9}{'v2':>8}{'v3':>8}{'v1':>13}{'v2':>8}{'v3':>8}")
+        print("-----------------------------------------------------------------------------------")
+        for nimi, pvm in paivat:
+            arvot = paivantiedot(pvm, lukemat)
+            kulutus = [f"{x:.2f}".replace('.', ',') for x in arvot[:3]]
+            tuotanto = [f"{x:.2f}".replace('.', ',') for x in arvot[3:]]
+            print(f"{nimi:<12}{pvm:<12}{kulutus[0]:>12}{kulutus[1]:>8}{kulutus[2]:>8}"
+                  f"{tuotanto[0]:>12}{tuotanto[1]:>8}{tuotanto[2]:>8}")
 
 if __name__ == "__main__":
     main()
