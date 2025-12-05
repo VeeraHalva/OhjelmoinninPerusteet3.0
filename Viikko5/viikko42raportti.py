@@ -196,7 +196,7 @@ def main():
           f"{kokonaisproduktio_v3:>8.2f}".replace('.',',')) 
     print("--------------------------------------------------------------") 
 
-#Tästä alkaa bonus valikon koodi. tulostaa siis pelkän valikon. koodi muuhun löytyy myös, mutta erillisenä funktiona.Jos haluuaa nähdä aikaisemmat on nämä laitettava kommentteina pois päältä.
+#Tästä alkaa bonus valikon koodi. tulostaa siis pelkän valikon. koodi muuhun löytyy myös, mutta erillisenä funktiona.Jos haluaa nähdä aikaisemmat on nämä laitettava kommentteina "pois päältä".
 # kai tämänkin olisi voinut eri tavalla, mutta osaaminen loppuu ainakin vielä kesken. Koodi myös vähän kamalan näköinen, mutta toimii.
 #käytetty samoja apufunktioita kuin aikaisemminkin, mutta tehty uudestaan, jotta alkuperäinen pysyy ehjänä.
 def nayta_valikko() -> str:
