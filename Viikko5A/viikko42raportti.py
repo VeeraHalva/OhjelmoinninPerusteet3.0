@@ -1,5 +1,5 @@
 
-# Copyright (c) 2025 Oma Nimi
+# Copyright (c) 2025 Veera Hälvä
 # License: MIT License
 
 from datetime import datetime
