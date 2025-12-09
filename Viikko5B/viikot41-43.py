@@ -2,136 +2,163 @@
 # Copyright (c) 2025 Veera Hälvä
 # License: MIT License
 
-from datetime import datetime
- 
-#Uutta koodia
+# Otettu ja muokattu versio kurssin esimerkkikoodista.
 
-def muunna_tiedot(kulutusTuotanto: list) -> list:
-    #muuttaa jokaisen tietorivin sopivaan tietotyyppiin
-    muutettu_tietorivi = []
-    muutettu_tietorivi.append(datetime.fromisoformat(kulutusTuotanto[0]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[1]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[2]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[3]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[4]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[5]))
-    muutettu_tietorivi.append(int(kulutusTuotanto[6]))
-    return muutettu_tietorivi
+# This code is licensed under the MIT License.
+# You are free to use, modify, and distribute this code,
+# provided that the original copyright notice is retained.
+#
+# See LICENSE file in the project root for full license information.
+
+from datetime import datetime, date
+
+
+def muunna_tiedot(tietue: list) -> list:
+    """
+    Muuttaa jokaisen annetun tietorivin tietotyypit oikeiksi
+
+    Parametrit:
+     tietue: Sisältää 7 kenttää, joista ensimmäinen date -> loput int
+
+    Palautus:
+     Listan, jossa muutetut tietotyypit
+    """
+    return [
+        datetime.fromisoformat(tietue[0]),
+        int(tietue[1]),
+        int(tietue[2]),
+        int(tietue[3]),
+        int(tietue[4]),
+        int(tietue[5]),
+        int(tietue[6]),
+    ]
+
 
 def lue_data(tiedoston_nimi: str) -> list:
-    """Luekee tiedoston ja palauta rivit sopivassa rakenteessa ja tietotyypeissä"""
-    kulutusJaTuotantoTiedot = []
+    """
+    Lukee CSV-tiedoston ja palauttaa rivit sopivassa rakenteessa ja tietotyypeissä.
+
+    Kutsuu funktiota muunna_tiedot (lst):
+     funktio palauttaa listan -> Tietotyypit muutettu
+
+    Parametrit:
+     tiedoston_nimi (str): ottaa vastaan tiedoston, jossa kentät jaettu merkillä ;
+
+    Palautus:
+     tietokanta (lst): palauttaa tietokannan, jossa tietotyypit on muutettu
+    """
+    tietokanta = []
     with open(tiedoston_nimi, "r", encoding="utf-8") as f:
-        next(f) # Ohitetaan otsikkorivi
-        for kulutusTuotantoTieto in f:
-            kulutusTuotantoTieto = kulutusTuotantoTieto.strip()
-            kulutusTuotantoTietoSarakkeet = kulutusTuotantoTieto.split(';')
-            kulutusJaTuotantoTiedot.append(muunna_tiedot(kulutusTuotantoTietoSarakkeet))
+        next(f)  # Otetaan kenttien esittelytiedot pois
+        for tietue in f:
+            tietue = tietue.split(";")
+            tietokanta.append(muunna_tiedot(tietue))
 
-    return kulutusJaTuotantoTiedot
+    return tietokanta
 
-def paivantiedot(paivamaara: str, lukemat: list) -> int:
-    pv = int(paivamaara.split('.')[0])
-    kk = int(paivamaara.split('.')[1])
-    vuosi = int(paivamaara.split('.')[2])
-    lasketutTiedot = [] 
-    kulutus1vaihe = 0   
-    kulutus2vaihe = 0
-    kulutus3vaihe = 0
-    tuotanto1vaihe = 0
-    tuotanto2vaihe = 0  
-    tuotanto3vaihe = 0
-    for lukema in lukemat:
-        if lukema[0].date() == datetime(vuosi, kk, pv).date():
-            kulutus1vaihe += lukema[1]   
-            kulutus2vaihe += lukema[2]
-            kulutus3vaihe += lukema[3]
-            tuotanto1vaihe += lukema[4]
-            tuotanto2vaihe += lukema[5]  
-            tuotanto3vaihe += lukema[6]
 
-    lasketutTiedot.append(kulutus1vaihe/1000)
-    lasketutTiedot.append(kulutus2vaihe/1000)
-    lasketutTiedot.append(kulutus3vaihe/1000)
-    lasketutTiedot.append(tuotanto1vaihe/1000)
-    lasketutTiedot.append(tuotanto2vaihe/1000)
-    lasketutTiedot.append(tuotanto3vaihe/1000)
-    return lasketutTiedot
+def paivantiedot(paiva: date, tietokanta: list) -> list:
+    """
+    Laskee kulutus- ja tuotantotiedot vaiheittain ja palauttaa listan
+    Laskettavat tiedot muutetaan Wh -> kWh
 
-            
+    Parametrit:
+     paiva (date): Raportoitava päivä
+     tietokanta (list): Kulutus- ja tuotantotiedot + päivämäärät
+
+    Palautus:
+     Listan, jossa tulostettavat merkkijonot
+    """
+    kulutus = [0, 0, 0]
+    tuotanto = [0, 0, 0]
+    for tietue in tietokanta:
+        if tietue[0].date() == paiva:
+            kulutus[0] += tietue[1] / 1000
+            kulutus[1] += tietue[2] / 1000
+            kulutus[2] += tietue[3] / 1000
+            tuotanto[0] += tietue[4] / 1000
+            tuotanto[1] += tietue[5] / 1000
+            tuotanto[2] += tietue[6] / 1000
+
+    return [
+        f"{paiva.day}.{paiva.month}.{paiva.year}",
+        f"{kulutus[0]:.2f}".replace(".", ","),
+        f"{kulutus[1]:.2f}".replace(".", ","),
+        f"{kulutus[2]:.2f}".replace(".", ","),
+        f"{tuotanto[0]:.2f}".replace(".", ","),
+        f"{tuotanto[1]:.2f}".replace(".", ","),
+        f"{tuotanto[2]:.2f}".replace(".", ","),
+    ]
 def main():
-    """ohjelman pääfunktio: lukee datan, laskee yhteenvedot ja tulostaa raportin"""
-    
-   
-    lukemat = lue_data("viikko42.csv")
-    #print(lue_data("viikko42.csv"))
-    #print(lue_data("viikko42.csv")[0][0])
-    print("viikon 42 sähkönkulutis ja -tuotanto (kWh, vaiheittain)")
-    print( )
-    Päivä = "päivä"
-    Pvm = "pvm"
-    Kulutus = "Kulutus [kWh]"
-    Tuotanto = "Tuotanto [kWh]" 
-    print(f"{Päivä:<12}{Pvm:<12}{Kulutus:>17}{Tuotanto :>24}")
-    
-    pvkkvvvv="pv.kk.vvvv"
-    v1="v1"
-    v2="v2"
-    v3="v3"
-    print(f"{'':<12}{pvkkvvvv:<12}{v1:>7}{v2:>7}{v3:>6}{v1:>10}{v2:>7}{v3:>7}")
-    print("---------------------------------------------------------------------------")
-    Maanantai= "Maanantai"
-    Päivämäärä= "13.10.2025"
-    maanantailukemat = paivantiedot("13.10.2025", lukemat)
-    print(f"{Maanantai:<12}{Päivämäärä:<12}",f"{maanantailukemat[0]:>9.2f}".replace('.',','), f"{maanantailukemat[1]:>5.2f}".replace('.',','),
-          f"{maanantailukemat[2]:>5.2f}".replace('.',','),f"{maanantailukemat[3]:>9.2f}".replace('.',','),
-          f"{maanantailukemat[4]:>6.2f}".replace('.',','),f"{maanantailukemat[5]:>6.2f}".replace('.',','))
-    
-#no nyt kyllä loin semmosen koodi-hirviön, että huh huh. sekoitus tekoälyä, selkeästi python kirjaa ja työpajaa. muttaa näyttää toimivan niin saa jäädä tähän.
-#erikoiset välimäärät johtuu varmaan välilyönnstä f-stringeissä.tähän lopputulokseen tulin. voin olla myös väärässä selviäsi testaanalla, mutta nyt olen laiska.
-#kopio sitten muille viikonpäiville
+    """
+    Ohjelman pääfunktio: lukee datan, laskee yhteenvedot ja tulostaa raportin.
+    """
 
-    Tiistai= "Tiistai"
-    Päivämäärä= "14.10.2025" 
-    tiistailukemat = paivantiedot("14.10.2025", lukemat)
-    print(f"{Tiistai:<12}{Päivämäärä:<12}",f"{tiistailukemat[0]:>9.2f}".replace('.',','), f"{tiistailukemat[1]:>5.2f}".replace('.',','),
-          f"{tiistailukemat[2]:>5.2f}".replace('.',','),f"{tiistailukemat[3]:>9.2f}".replace('.',','),
-          f"{tiistailukemat[4]:>6.2f}".replace('.',','),f"{tiistailukemat[5]:>6.2f}".replace('.',','))
+def main():
+    """
+    Ohjelman pääfunktio: lukee datan, laskee yhteenvedot ja tulostaa raportin.
+    """
+    KulutusTuotantoViikko41 = lue_data("viikko41.csv")
+    KulutusTuotantoViikko42 = lue_data("viikko42.csv")
+    KulutusTuotantoViikko43 = lue_data("viikko43.csv")
+    väli = "\t"
 
-    Keskiviikko= "Keskiviikko"
-    Päivämäärä= "15.10.2025"
-    keskiviikkolukemat = paivantiedot("15.10.2025", lukemat)
-    print(f"{Keskiviikko:<12}{Päivämäärä:<12}",f"{keskiviikkolukemat[0]:>9.2f}".replace('.',','), f"{keskiviikkolukemat[1]:>5.2f}".replace('.',','),
-          f"{keskiviikkolukemat[2]:>5.2f}". replace('.',','),f"{keskiviikkolukemat[3]:>9.2f}".replace('.',','),
-          f"{keskiviikkolukemat[4]:>6.2f}".replace('.',','),f"{keskiviikkolukemat[5]:>6.2f}".replace('.',','))
 
-    Torstai= "Torstai"
-    Päivämäärä= "16.10.2025"
-    torstaillukemat = paivantiedot("16.10.2025", lukemat)
-    print(f"{Torstai:<12}{Päivämäärä:<12}",f"{torstaillukemat[0]:>9.2f}".replace('.',','), f"{torstaillukemat[1]:>5.2f}".replace('.',','),
-          f"{torstaillukemat[2]:>5.2f}". replace('.',','),f"{torstaillukemat[3]:>9.2f}".replace('.',','),
-          f"{torstaillukemat[4]:>6.2f}".replace('.',','),f"{torstaillukemat[5]:>6.2f}".replace('.',','))
+    #Viikko 41 raportti
+    viikko41 = "\nViikon 41 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n"
+    viikko41 += " \n"
+    viikko41 += "Päivä\t\tPvm\t\t\t\t\t\tKulutus [kWh]\t\t\t\t\tTuotanto [kWh]\n"
+    viikko41 += "\t\t\t(pv.kk.vvvv)\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko41 += "-------------------------------------------------------------------------------------------\n"
+    viikko41 += "Maanantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 6), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Tiistai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 7), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Keskiviikko\t" + "\t\t".join(paivantiedot(date(2025, 10, 8), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Torstai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 9), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Perjantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 10), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Lauantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 11), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "Sunnuntai\t" + "\t\t".join(paivantiedot(date(2025, 10, 12), KulutusTuotantoViikko41)) + "\n"
+    viikko41 += "-------------------------------------------------------------------------------------------\n"
+    # Viikko 42 raportti
+    viikko42 = "\nViikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n"
+    viikko42 += " \n"
+    viikko42 += "Päivä\t\tPvm\t\t\t\t\t\tKulutus [kWh]\t\t\t\t\tTuotanto [kWh]\n"
+    viikko42 += "\t\t\t(pv.kk.vvvv)\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko42 += "-------------------------------------------------------------------------------------------\n"
+    viikko42 += "Maanantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 13), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Tiistai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 14), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Keskiviikko\t" + "\t\t".join(paivantiedot(date(2025, 10, 15), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Torstai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 16), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Perjantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 17), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Lauantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 18), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "Sunnuntai\t" + "\t\t".join(paivantiedot(date(2025, 10, 19), KulutusTuotantoViikko42)) + "\n"
+    viikko42 += "-------------------------------------------------------------------------------------------\n"
 
-    Perjantai= "Perjantai"
-    Päivämäärä= "17.10.2025"
-    perjantailukemat = paivantiedot("17.10.2025", lukemat)
-    print(f"{Perjantai:<12}{Päivämäärä:<12}",f"{perjantailukemat[0]:>9.2f}".replace('.',','), f"{perjantailukemat[1]:>5.2f}".replace('.',','),
-          f"{perjantailukemat[2]:>5.2f}". replace('.',','),f"{perjantailukemat[3]:>9.2f}".replace('.',','),
-          f"{perjantailukemat[4]:>6.2f}".replace('.',','),f"{perjantailukemat[5]:>6.2f}".replace('.',','))
+    # Viikko 43 raportti
+    viikko43 = "\nViikon 43 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n"
+    viikko43 += "\n" #minkä pahuksen takkai tämä pahuksen väli ei tule tulosteeseen oikein??? Tuolta puuttu \n ylempää!!! mitä pahusta????????
+    viikko43 += "Päivä\t\tPvm\t\t\t\t\t\tKulutus [kWh]\t\t\t\t\tTuotanto [kWh]\n"
+    viikko43 += "\t\t\t(pv.kk.vvvv)\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko43 += "-------------------------------------------------------------------------------------------\n"
+    viikko43 += "Maanantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 20), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Tiistai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 21), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Keskiviikko\t" + "\t\t".join(paivantiedot(date(2025, 10, 22), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Torstai\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 23), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Perjantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 24), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Lauantai\t" + "\t\t".join(paivantiedot(date(2025, 10, 25), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "Sunnuntai\t" + "\t\t".join(paivantiedot(date(2025, 10, 26), KulutusTuotantoViikko43)) + "\n"
+    viikko43 += "-------------------------------------------------------------------------------------------\n"
 
-    Lauantai= "Lauantai"
-    Päivämäärä= "18.10.2025"
-    lauantailukemat = paivantiedot("18.10.2025", lukemat)
-    print(f"{Lauantai:<12}{Päivämäärä:<12}",f"{lauantailukemat[0]:>9.2f}".replace('.',','), f"{lauantailukemat[1]:>5.2f}".replace('.',','),
-          f"{lauantailukemat[2]:>5.2f}". replace('.',','),f"{lauantailukemat[3]:>9.2f}".replace('.',','),
-          f"{lauantailukemat[4]:>6.2f}".replace('.',','),f"{lauantailukemat[5]:>6.2f}".replace('.',','))
+#Nämäkin vosi tehdä funktiona. katsoo jaksaako myöhemmin tai bonustehtävissä.
 
-    Sunnuntai= "Sunnuntai"
-    Päivämäärä= "19.10.2025"
-    sunnuntailukemat = paivantiedot("19.10.2025", lukemat)
-    print(f"{Sunnuntai:<12}{Päivämäärä:<12}",f"{sunnuntailukemat[0]:>9.2f}".replace('.',','), f"{sunnuntailukemat[1]:>5.2f}".replace('.',','),
-          f"{sunnuntailukemat[2]:>5.2f}". replace('.',','),f"{sunnuntailukemat[3]:>9.2f}".replace('.',','),
-          f"{sunnuntailukemat[4]:>6.2f}".replace('.',','),f"{sunnuntailukemat[5]:>6.2f}".replace('.',','))
-    
-    print("---------------------------------------------------------------------------")
-    print( )
+#kirjoitetaan jotain tiedostoon
+    with open("yhteenveto.txt", "w", encoding="utf-8") as f:
+        f.write(viikko41)
+        f.write(viikko42)
+        f.write(viikko43)   
+#joku rikki!! mikä rikki??? ei s**tna!! No nyt toimii vähän turhan paljon välejä, mutta toimii
+#tulosteessa Liian vähän välekä... LIIKAA välejä???? (VITUTTAA!!) en osaa/jaksa korjata!... mutta tieto tulee selkeästi esille.
+
+print("raportti luotu")
+
+if __name__ == "__main__":
+    main()
