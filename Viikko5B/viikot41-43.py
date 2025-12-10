@@ -416,7 +416,11 @@ def main():
         f.write(Viikko43yht)
         f.write(Kaikkiyht)
 
-#tähän koodi jolla luodaan se saamarin valikko!
+
+
+#tähän koodi jolla luodaan se saamarin valikko! Kopiota aikasemmasta koodista ja tehty uudestaan, että ei mene vanha rikki.
+#oon liian nössö muuttaakeseni jo toimivaa koodia. Oletan että tehtävän ajatus olisi tehdä niin
+# Ei tällasita kilometrikoodia. Mutta nössö, mikä nössö.
 
 def main():
     """Ohjelman pääfunktio: lukee datan, laskee yhteenvedot ja tulostaa raportin."""
@@ -426,11 +430,7 @@ def main():
     KulutusTuotantoViikko42 = lue_data("viikko42.csv")
     KulutusTuotantoViikko43 = lue_data("viikko43.csv")
 #TÄSTÄ ALKAA BONARIT
-
-from datetime import datetime
- 
-#Uutta koodia
-
+from datetime import datetime 
 def muunna_tiedot(kulutusTuotanto: list) -> list:
     #muuttaa jokaisen tietorivin sopivaan tietotyyppiin
     muutettu_tietorivi = []
@@ -716,7 +716,10 @@ def main():
     else:
         print("Virheellinen valinta.")
 
-
+#Aivan kamalaa koodia, kun ei uskalla lähteä muuttamaan jo toimivaakoodia. tulee siis bonukset aina tehtyä
+#kopioimalla jo toimivasta. Plus tätäkin olisi saanut funktioilla lyhennettyä huomattavasti. Mutta kiire kiire,
+#niin ei kerkeä oikein syvemmin paneutua. 
+#koodi toimii mutta en ole tyytyväinen.
 
 
 if __name__ == "__main__":
