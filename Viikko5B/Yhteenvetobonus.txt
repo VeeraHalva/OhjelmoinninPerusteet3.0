@@ -1,0 +1,9 @@
+Raportti viikosta 43
+...
+
+Viikon 43 yhteenveto (kokonaiskulutus ja -tuotanto vaiheittain)
+                              v1       v2       v3      
+--------------------------------------------------------------
+kulutus yhteensä [kWh]      100,60   72,33   31,99
+tuotanto yhteensä [kWh]       1,48    1,17    6,37
+--------------------------------------------------------------
