@@ -1,1 +1,5 @@
-1.569
+Raportti aikaväliltä 01.01.2025 – 12.12.2025
+
+Kokonaiskulutus: 7396.84 MWh
+Kokonaistuotanto: 2922.38 MWh
+Tunteja aikavälillä: 8040
