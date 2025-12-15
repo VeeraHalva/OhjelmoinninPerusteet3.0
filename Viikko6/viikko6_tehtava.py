@@ -37,8 +37,9 @@ def nayta_paavalikko() -> str:
     print("1) Päiväkohtainen yhteenveto aikaväliltä")
     print("2) Kuukausikohtainen yhteenveto yhdelle kuukaudelle")
     print("3) Vuoden 2025 kokonaisyhteenveto")
-    print("4) Lopeta ohjelma")
-    return input("Anna valinta (1–4): ").strip()
+    print("4) Poikkeuspäivät (suodatin)")
+    print("5) Lopeta ohjelma")
+    return input("Anna valinta (1–5): ").strip()
 
 def raportti_aikavali(alku: date, loppu: date, data: list) -> List[str]:
     """Muodostaa päiväkohtaisen yhteenvedon aikaväliltä."""
@@ -130,6 +131,25 @@ def raportti_vuosi(data: list) -> List[str]:
 
     return rivit
 
+def raportti_poikkeuspaivat(data: list, kulutus_raja: float, lampo_raja: float) -> List[str]:
+    """Etsii poikkeuspäivät, joissa kulutus > kulutus_raja ja lämpötila < lampo_raja."""
+    rivit = [
+        f"Poikkeuspäivät (kulutus > {fmt(kulutus_raja)} kWh ja lämpötila < {fmt(lampo_raja)} °C)",
+        ""
+    ]
+
+    loydetyt = 0
+
+    for pvm, k, t, h in data:
+        if k > kulutus_raja and h < lampo_raja:
+            rivit.append(f"{pvm:%d.%m.%Y %H:%M} | Kulutus {fmt(k)} kWh | Lämpötila {fmt(h)} °C")
+            loydetyt += 1
+
+    if loydetyt == 0:
+        rivit.append("Ei poikkeuspäiviä annetulla rajauksella.")
+
+    return rivit
+
 def tulosta_raportti_konsoliin(rivit: List[str]) -> None:
     """Tulostaa raportin konsoliin."""
     print("\n".join(rivit))
@@ -142,6 +162,7 @@ def kirjoita_raportti_tiedostoon(rivit: List[str]) -> None:
 def main() -> None:
     """Ohjelman pääfunktio."""
     data = lue_data("2025.csv")
+    raportteja_luotu = 0
 
     while True:
         valinta = nayta_paavalikko()
@@ -168,6 +189,16 @@ def main() -> None:
             raportti = raportti_vuosi(data)
 
         elif valinta == "4":
+            try:
+                kulutus_raja = float(input("Anna kulutusraja (kWh): ").replace(",", "."))
+                lampo_raja = float(input("Anna lämpöraja (°C): ").replace(",", "."))
+            except ValueError:
+                print("Virheellinen syöte.")
+                continue
+            raportti = raportti_poikkeuspaivat(data, kulutus_raja, lampo_raja)
+
+        elif valinta == "5":
+            print(f"Ohjelman aikana luotiin {raportteja_luotu} raporttia.")
             print("Lopetetaan ohjelma...")
             break
 
@@ -175,7 +206,12 @@ def main() -> None:
             print("Virheellinen valinta.")
             continue
 
+        # Tarkistus: löytyikö dataa?
+        if any("Ei dataa" in r for r in raportti):
+            print("Varoitus: annetulta aikaväliltä/kuukaudelta ei löytynyt dataa.")
+
         tulosta_raportti_konsoliin(raportti)
+        raportteja_luotu += 1
 
         print("\nMitä haluat tehdä seuraavaksi?")
         print("1) Kirjoita raportti tiedostoon raportti.txt")
@@ -190,10 +226,11 @@ def main() -> None:
         elif jatko == "2":
             continue
         elif jatko == "3":
+            print(f"Ohjelman aikana luotiin {raportteja_luotu} raporttia.")
             print("Lopetetaan ohjelma...")
             break
         else:
             print("Virheellinen valinta.")
-
+#itken...
 if __name__ == "__main__":
     main()

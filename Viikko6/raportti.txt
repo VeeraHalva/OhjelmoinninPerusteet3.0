@@ -1,6 +1,8 @@
-Raportti aikaväliltä 01.01.2025 – 12.12.2025
+Poikkeuspäivät (kulutus > 5,00 kWh ja lämpötila < 5,00 °C)
 
-Kokonaiskulutus: 7396,84 kWh
-Kokonaistuotanto: 2922,38 kWh
-Keskilämpötila: 7,83 °C
-Tunteja aikavälillä: 8040
+04.01.2025 15:00 | Kulutus 5,53 kWh | Lämpötila -7,90 °C
+06.01.2025 08:00 | Kulutus 5,89 kWh | Lämpötila -7,30 °C
+11.01.2025 16:00 | Kulutus 5,05 kWh | Lämpötila -3,60 °C
+12.01.2025 14:00 | Kulutus 5,63 kWh | Lämpötila -9,10 °C
+20.02.2025 06:00 | Kulutus 5,39 kWh | Lämpötila -7,10 °C
+15.11.2025 12:00 | Kulutus 5,63 kWh | Lämpötila -1,00 °C
